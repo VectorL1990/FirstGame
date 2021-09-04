@@ -1140,6 +1140,7 @@ void ABaseCharacter::EvaluateLongTaskPatrolling()
 		{
 			return;
 		}
+
 		// If no target is locked down, we should give an arbitrary target to move
 		FVector2D randPatrolPoint = FMath::RandPointInCircle(m_patrolRange);
 
