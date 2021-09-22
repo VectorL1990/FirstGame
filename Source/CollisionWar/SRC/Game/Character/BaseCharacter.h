@@ -462,6 +462,11 @@ public:
 	float m_patrolRange = 0.f;
 
 	FVector m_spawnLoc;
+
+	UPROPERTY(EditDefaultsOnly)
+	float m_patrolInterval = 2.f;
+
+	float m_currentPatrolIntervalCount = 0.f;
 	/************************************************************************/
 	/* À¶Í¼Ä¬ÈÏ±äÁ¿
 	/************************************************************************/
@@ -537,7 +542,7 @@ public:
 
 	void RecoverPhysics();
 
-	void EvaluateConditionAround();
+	void EvaluateConditionAround(float deltaT);
 
 	virtual void EvaluateLongTaskUnderRandomAttackState();
 
@@ -545,7 +550,7 @@ public:
 
 	void EvaluateLongTaskUnderPlayerHunterState();
 
-	void EvaluateLongTaskPatrolling();
+	void EvaluateLongTaskPatrolling(float deltaT);
 
 	virtual void EvaluateShortTask();
 

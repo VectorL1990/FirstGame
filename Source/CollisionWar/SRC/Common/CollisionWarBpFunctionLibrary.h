@@ -276,6 +276,7 @@ enum class ECharacterThinkMode : uint8
 	CTM_DefendDefaultLoc,
 	CTM_PlayerHunter,
 	CTM_StrongholdDestroyer,
+	CTM_Patrol
 };
 
 USTRUCT()

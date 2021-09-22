@@ -338,8 +338,15 @@ void ABattleLevelPlayerController::DealRightClickDownEvent()
 			pBattleLevelGameMode->DeleteTutorialStep();
 	}
 
-	if (pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseAnimInstance->m_motionStateString == "PMS_TransientPunch") return;
+	if (pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseAnimInstance->m_motionStateString == "PMS_TransientPunch" &&
+		!pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseAnimInstance->m_canTransferState)
+		return;
 	if (pBattleLevelGameMode->m_playerOperation.actionName != "NULL") return;
+	if (pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseAnimInstance->m_canTransferState)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, "BattleLevelPlayerController::DealRightClickDown can transfer");
+		pBattleLevelGameMode->m_pPlayerCharacter->NotifyEndSkill();
+	}
 	FHitResult hitResult;
 	GetHitResultUnderCursorByChannel(TraceTypeQuery1, false, hitResult);
 	if (!hitResult.bBlockingHit)
@@ -351,8 +358,8 @@ void ABattleLevelPlayerController::DealRightClickDownEvent()
 	if (pBattleLevelGameMode->m_pPlayerCharacter->m_curEquipNb == -1)
 	{
 		pBattleLevelGameMode->m_playerOperation.equipmentNb = -1;
-		if (pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseAnimInstance->m_motionStateString == "PMS_NULL" &&
-			pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseEquipment->m_pSkills[m_curPressSkillNb] &&
+		if ((pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseAnimInstance->m_motionStateString == "PMS_NULL" || pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseAnimInstance->m_canTransferState)
+			&& pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseEquipment->m_pSkills[m_curPressSkillNb] &&
 			pBattleLevelGameMode->m_pPlayerCharacter->m_pBaseEquipment->m_pSkills[m_curPressSkillNb]->m_canImplementFlag)
 		{
 			//m_curPressSkillNb = FindSkillByCombineKey();
@@ -659,23 +666,6 @@ void ABattleLevelPlayerController::ChangeOperationSkillNbByClick(int32 cardNb, b
 			break;
 		}
 	}
-}
-
-void ABattleLevelPlayerController::SetCurSkillNb(int32 skillNb)
-{
-	/*if (m_pGroup && m_pGroup->m_pPlayerCharacter)
-	{
-		m_pGroup->m_pPlayerCharacter->m_curSkillNb = skillNb;
-	}*/
-}
-
-void ABattleLevelPlayerController::SetPlayerEquipment(int32 equipNb)
-{
-	/*if (m_pGroup && m_pGroup->m_pPlayerCharacter)
-	{
-		if (equipNb < m_pGroup->m_pPlayerCharacter->m_pEquipmentInfos.Num())
-			m_pGroup->m_pPlayerCharacter->ChangeEquipment(equipNb);
-	}*/
 }
 
 int32 ABattleLevelPlayerController::GeometryRecognize()

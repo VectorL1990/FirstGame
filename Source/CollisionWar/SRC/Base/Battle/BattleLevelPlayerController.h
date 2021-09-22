@@ -187,11 +187,6 @@ public:
 	/************************************************************************/
 	/*¹¦ÄÜº¯Êý
 	/************************************************************************/
-	UFUNCTION(BlueprintCallable, Category = "CollisionWar")
-	void SetCurSkillNb(int32 skillNb);
-
-	UFUNCTION(BlueprintCallable, Category = "CollisionWar")
-	void SetPlayerEquipment(int32 equipNb);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "CollisionWar")
 	void NotifyGeoRecognize();

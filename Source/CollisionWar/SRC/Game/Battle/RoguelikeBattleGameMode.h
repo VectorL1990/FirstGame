@@ -88,7 +88,7 @@ public:
 	
 	void UpdateCharacterActionInstruction(const FPlayerOperationInfo& playerOperation, const TArray<FAICharacterOperationInfo>& aiCharacterOperations);
 
-	virtual void UpdateAllCharacterAILogic() override;
+	virtual void UpdateAllCharacterAILogic(float deltaT) override;
 
 	virtual void UpdateTeamSquads() override;
 

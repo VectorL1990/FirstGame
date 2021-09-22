@@ -15,6 +15,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNotifyChaStopTransientMotion);
 
 class AKing;
 
+UENUM(BlueprintType, Blueprintable)
+enum class EComboState : uint8
+{
+	Still,
+	FirstAct,
+	SecondAct,
+	ThirdAct
+};
+
 UCLASS(BlueprintType, Blueprintable)
 class COLLISIONWAR_API UBaseAnimInstance : public UAnimInstance
 {
@@ -117,6 +126,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "CollisionWar/Base/Animation")
 	TMap<int32, USoundBase*> m_pFootStepSounds;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool m_canTransferState;
+
+	UPROPERTY(BlueprintReadWrite)
+	EComboState m_comboState;
 
 	FNotifyChaImplementSkill m_notifyChaImplementSkillDelegate;
 	FNotifyChaStopTransientMotion m_notifyChaStopTrasientMotionDelegate;

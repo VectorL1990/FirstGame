@@ -98,7 +98,7 @@ void ARoguelikeBattleGameMode::Tick(float DeltaSeconds)
 	//m_pPhysCalculator->UpdateReactionGeoPair();
 
 	//AI模块，只在主机运行.
-	UpdateAllCharacterAILogic();
+	UpdateAllCharacterAILogic(DeltaSeconds);
 	UpdateTeamSquads();
 	UpdateAINavigation();
 	//RCDebug();
@@ -244,10 +244,15 @@ void ARoguelikeBattleGameMode::UpdateCharacterActionInstruction(const FPlayerOpe
 			playerOperation.actionName == "ImplementBlock" ||
 			playerOperation.actionName == "ImplementDodge")
 		{
-			if (m_pPlayerCharacter->m_pBaseAnimInstance->m_motionStateString != "PMS_NULL")
+			if (m_pPlayerCharacter->m_pBaseAnimInstance->m_motionStateString != "PMS_NULL" && 
+				!m_pPlayerCharacter->m_pBaseAnimInstance->m_canTransferState)
 				m_pPlayerCharacter->m_actionName = "NULL";
 			else
 			{
+				if (m_pPlayerCharacter->m_pBaseAnimInstance->m_canTransferState)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, "RoguelikeGM::UpdateCharacterActionInstruction can transfer is true");
+				}
 				m_pPlayerCharacter->m_actionName = playerOperation.actionName;
 			}
 		}
@@ -286,13 +291,13 @@ void ARoguelikeBattleGameMode::UpdateCharacterActionInstruction(const FPlayerOpe
 	m_AIOperationList.Empty();
 }
 
-void ARoguelikeBattleGameMode::UpdateAllCharacterAILogic()
+void ARoguelikeBattleGameMode::UpdateAllCharacterAILogic(float deltaT)
 {
 	if (m_pAICharacters.Num() == 0 || m_isInTutorial) return;
 	for (int32 i = 0; i < m_pAICharacters.Num(); i++)
 	{
 		m_pAICharacters[i]->m_surviveTime += 1;
-		m_pAICharacters[i]->EvaluateConditionAround();
+		m_pAICharacters[i]->EvaluateConditionAround(deltaT);
 	}
 }
 

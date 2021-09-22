@@ -171,7 +171,7 @@ void ABattleLevelGameModeBase::LevelLogic_Implementation(int32 frameNb)
 
 }
 
-void ABattleLevelGameModeBase::UpdateAllCharacterAILogic()
+void ABattleLevelGameModeBase::UpdateAllCharacterAILogic(float deltaT)
 {
 	/************************************************************************/
 	/* 由主机运行，AI角色行为更新 */
@@ -187,7 +187,7 @@ void ABattleLevelGameModeBase::UpdateAllCharacterAILogic()
 	for (int32 i=0; i<m_maxUpdateAINbPerFrame; i++)
 	{
 		if (m_curAIUpdateNb >= m_pAICharacters.Num()) m_curAIUpdateNb = 0;
-		m_pAICharacters[m_curAIUpdateNb]->EvaluateConditionAround();
+		m_pAICharacters[m_curAIUpdateNb]->EvaluateConditionAround(deltaT);
 		m_curAIUpdateNb++;
 	}
 }
@@ -230,8 +230,15 @@ void ABattleLevelGameModeBase::UpdateCharacterNormalLogic(float dT)
 			}
 			else
 			{
-				if (m_pAllCharacters[i]->m_pBaseAnimInstance->m_motionStateString == "PMS_NULL")
+				if (m_pAllCharacters[i]->m_pBaseAnimInstance->m_motionStateString == "PMS_NULL" ||
+					m_pAllCharacters[i]->m_pBaseAnimInstance->m_canTransferState)
+				{
+					if (m_pAllCharacters[i]->m_pBaseAnimInstance->m_canTransferState)
+					{
+						GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, "BattleLevelGM::UpdateCharacterNormalLogic can transfer is true");
+					}
 					m_pAllCharacters[i]->ImplementSkill_Int(m_pAllCharacters[i]->m_campFlag);
+				}
 			}
 		}
 		else if (m_pAllCharacters[i]->m_actionName == TEXT("CancelBlock"))

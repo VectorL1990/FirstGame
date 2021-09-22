@@ -598,49 +598,103 @@ void AKing::NotifyLaunchSkill()
 		float yaw = GetActorRotation().Yaw;
 		TArray<TSubclassOf<class ABasePhysGeo> > geoClasses;
 		if (pSkill->m_mutationGeoClass.Contains(pSkill->m_mutationType)) geoClasses = pSkill->m_mutationGeoClass[pSkill->m_mutationType].geoClasses;
-		for (int32 i = 0; i < geoClasses.Num(); i++)
+		if (pSkill->m_skillName == "Chop")
 		{
-			if (!geoClasses[i]) continue;
-			for (int32 j = 0; j < pSkill->m_spawnGeoNb[i]; j++)
+			TSubclassOf<class ABasePhysGeo> geoClass = NULL;
+			if (m_pBaseAnimInstance->m_comboState == EComboState::FirstAct)
 			{
-				int32 relativeLauchAngle = pSkill->m_spreadAngle[geoNb];
-				FVector spawnPtCharacterOffset = m_pSpawnPoint->GetComponentLocation() - GetActorLocation();
-				FVector roateVector = spawnPtCharacterOffset.RotateAngleAxis(relativeLauchAngle, FVector::UpVector) * pSkill->m_spawnDistanceAmplifiedList[geoNb];
-				FRotator launchRotator(0, yaw + relativeLauchAngle, 0);
-				FVector launchLoc;
-				//这里要根据技能类型来确定生成的位置
-				if (pSkill->m_skillType == 1)
+				geoClass = geoClasses[0];
+			}
+			else if (m_pBaseAnimInstance->m_comboState == EComboState::SecondAct)
+			{
+				geoClass = geoClasses[1];
+			}
+			else if (m_pBaseAnimInstance->m_comboState == EComboState::ThirdAct)
+			{
+				geoClass = geoClasses[2];
+			}
+			FVector spawnPtCharacterOffset = m_pSpawnPoint->GetComponentLocation() - GetActorLocation();
+			FVector roateVector = spawnPtCharacterOffset.RotateAngleAxis(0, FVector::UpVector) * pSkill->m_spawnDistanceAmplifiedList[0];
+			FRotator launchRotator(0, yaw, 0);
+			FVector launchLoc;
+			//这里要根据技能类型来确定生成的位置
+			if (pSkill->m_skillType == 1)
+			{
+				//定位型技能
+				launchLoc.X = m_targetLoc.X + roateVector.X;
+				launchLoc.Y = m_targetLoc.Y + roateVector.Y;
+				launchLoc.Z = m_defaultHeight;
+			}
+			else
+			{
+				launchLoc.X = GetActorLocation().X + roateVector.X;
+				launchLoc.Y = GetActorLocation().Y + roateVector.Y;
+				launchLoc.Z = m_defaultHeight;
+			}
+			//这里要根据技能类型来确定生成的位置
+			ABasePhysGeo* pGeo = GetWorld()->SpawnActor<ABasePhysGeo>(geoClass, launchLoc, launchRotator);
+			if (pSkill->m_skillType == 2)
+			{
+				AProjectilePoint* pProjectilePoint = Cast<AProjectilePoint>(pGeo);
+				pProjectilePoint->InitialProjectilePoint(m_targetLoc);
+			}
+			for (int32 k = 0; k < spawnGeos.Num(); k++)
+			{
+				spawnGeos[k]->m_pRootGeos.Add(pGeo);
+				pGeo->m_pRootGeos.Add(spawnGeos[k]);
+			}
+			pGeo->SetAttachEquipment(pEquipInfo);
+			m_pNewSpawnPhysGeos.Add(pGeo);
+			if (pSkill->m_isHostSkill)
+				m_pControlPhysGeos.Add(pGeo);
+		}
+		else
+		{
+			for (int32 i = 0; i < geoClasses.Num(); i++)
+			{
+				if (!geoClasses[i]) continue;
+				for (int32 j = 0; j < pSkill->m_spawnGeoNb[i]; j++)
 				{
-					//定位型技能
-					launchLoc.X = m_targetLoc.X + roateVector.X;
-					launchLoc.Y = m_targetLoc.Y + roateVector.Y;
-					launchLoc.Z = m_defaultHeight;
+					int32 relativeLauchAngle = pSkill->m_spreadAngle[geoNb];
+					FVector spawnPtCharacterOffset = m_pSpawnPoint->GetComponentLocation() - GetActorLocation();
+					FVector roateVector = spawnPtCharacterOffset.RotateAngleAxis(relativeLauchAngle, FVector::UpVector) * pSkill->m_spawnDistanceAmplifiedList[geoNb];
+					FRotator launchRotator(0, yaw + relativeLauchAngle, 0);
+					FVector launchLoc;
+					//这里要根据技能类型来确定生成的位置
+					if (pSkill->m_skillType == 1)
+					{
+						//定位型技能
+						launchLoc.X = m_targetLoc.X + roateVector.X;
+						launchLoc.Y = m_targetLoc.Y + roateVector.Y;
+						launchLoc.Z = m_defaultHeight;
+					}
+					else
+					{
+						launchLoc.X = GetActorLocation().X + roateVector.X;
+						launchLoc.Y = GetActorLocation().Y + roateVector.Y;
+						launchLoc.Z = m_defaultHeight;
+					}
+					//这里要根据技能类型来确定生成的位置
+					ABasePhysGeo* pGeo = GetWorld()->SpawnActor<ABasePhysGeo>(geoClasses[i], launchLoc, launchRotator);
+					if (pSkill->m_skillType == 2)
+					{
+						AProjectilePoint* pProjectilePoint = Cast<AProjectilePoint>(pGeo);
+						pProjectilePoint->InitialProjectilePoint(m_targetLoc);
+					}
+					for (int32 k = 0; k < spawnGeos.Num(); k++)
+					{
+						spawnGeos[k]->m_pRootGeos.Add(pGeo);
+						pGeo->m_pRootGeos.Add(spawnGeos[k]);
+					}
+					pGeo->SetAttachEquipment(pEquipInfo);
+					m_pNewSpawnPhysGeos.Add(pGeo);
+					if (pSkill->m_isHostSkill)
+						m_pControlPhysGeos.Add(pGeo);
+					geoNb += 1;
 				}
-				else
-				{
-					launchLoc.X = GetActorLocation().X + roateVector.X;
-					launchLoc.Y = GetActorLocation().Y + roateVector.Y;
-					launchLoc.Z = m_defaultHeight;
-				}
-				//这里要根据技能类型来确定生成的位置
-				ABasePhysGeo* pGeo = GetWorld()->SpawnActor<ABasePhysGeo>(geoClasses[i], launchLoc, launchRotator);
-				if (pSkill->m_skillType == 2)
-				{
-					AProjectilePoint* pProjectilePoint = Cast<AProjectilePoint>(pGeo);
-					pProjectilePoint->InitialProjectilePoint(m_targetLoc);
-				}
-				for (int32 k = 0; k < spawnGeos.Num(); k++)
-				{
-					spawnGeos[k]->m_pRootGeos.Add(pGeo);
-					pGeo->m_pRootGeos.Add(spawnGeos[k]);
-				}
-				pGeo->SetAttachEquipment(pEquipInfo);
-				m_pNewSpawnPhysGeos.Add(pGeo);
-				if (pSkill->m_isHostSkill)
-					m_pControlPhysGeos.Add(pGeo);
-				geoNb += 1;
 			}
 		}
+		
 		for (int32 i = 0; i < pSkill->m_appendHostEffectParams.Num(); i++)
 		{
 			if (spawnGeos.Num() > 0)
@@ -664,8 +718,15 @@ void AKing::NotifyEndSkill()
 	if (!m_pBaseEquipment) return;
 	if (m_implementSkillType == 0)
 	{
-		UBaseSkill* pSkill = m_pBaseEquipment->m_pSkills[m_curSkillNb];
-		int32 deleteSkillNb = m_curSkillNb;
+		UBaseSkill* pSkill = NULL;
+		if (m_pBaseAnimInstance->m_comboState != EComboState::Still)
+		{
+			pSkill = m_pBaseEquipment->m_pSkills[0];
+		}
+		else
+		{
+			pSkill = m_pBaseEquipment->m_pSkills[m_curSkillNb];
+		}
 		StopContinuousTask();
 		pSkill->m_skillFrameCount = 0;
 		pSkill->m_hasSpawnGeo = false;
@@ -735,6 +796,29 @@ void AKing::ImplementSkill_Int(int32 campFlag)
 		ConsumeEnergyBall();
 	}
 	m_pBaseAnimInstance->m_motionStateString = pSkill->m_skillMotionTypeString;
+	if (pSkill->m_skillAnimName == "Lucian_Chop_1")
+	{
+		if (m_pBaseAnimInstance->m_comboState == EComboState::Still)
+		{
+			m_pBaseAnimInstance->m_comboState = EComboState::FirstAct;
+		}
+		if (m_pBaseAnimInstance->m_canTransferState)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, "Launch combo transfer");
+			if (m_pBaseAnimInstance->m_comboState == EComboState::FirstAct)
+			{
+				m_pBaseAnimInstance->m_comboState = EComboState::SecondAct;
+			}
+			else if (m_pBaseAnimInstance->m_comboState == EComboState::SecondAct)
+			{
+				m_pBaseAnimInstance->m_comboState = EComboState::ThirdAct;
+			}
+			else if (m_pBaseAnimInstance->m_comboState == EComboState::ThirdAct)
+			{
+				m_pBaseAnimInstance->m_comboState = EComboState::Still;
+			}
+		}
+	}
 	m_pBaseAnimInstance->NotifyImplementSkill(pSkill->m_skillAnimName);
 	//更新技能信息
 	pSkill->m_canImplementFlag = false;

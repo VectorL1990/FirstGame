@@ -53,7 +53,7 @@ public:
 
 	void RCDebug();
 
-	virtual void UpdateAllCharacterAILogic();
+	virtual void UpdateAllCharacterAILogic(float deltaT);
 
 	void UpdateCharacterNormalLogic(float dT);
 

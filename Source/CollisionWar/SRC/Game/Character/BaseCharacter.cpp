@@ -84,14 +84,22 @@ void ABaseCharacter::Tick(float DeltaSeconds)
 		FVector expandVector(expandDeltaX, expandDeltaY, 0);
 		if (m_characterType == 0 && m_pNormalLongTask)
 		{
-			FVector destinationOffset = m_pNormalLongTask->m_destination - GetActorLocation();
-			float destinationOffsetSquare = destinationOffset.Size();
-			float expandSize = expandVector.Size();
-			if (expandSize >= destinationOffsetSquare)
+			if (m_thinkMode == ECharacterThinkMode::CTM_Patrol && m_pNormalLongTask->m_taskType == ETaskType::TT_NULL)
 			{
-				FVector desLoc(m_pNormalLongTask->m_destination.X, m_pNormalLongTask->m_destination.Y, GetActorLocation().Z);
-				SetActorLocation(desLoc);
 				return;
+			}
+			else
+			{
+				FVector destinationOffset = m_pNormalLongTask->m_destination - GetActorLocation();
+				float destinationOffsetSquare = destinationOffset.Size();
+				float expandSize = expandVector.Size();
+				if (expandSize >= destinationOffsetSquare)
+				{
+					FVector desLoc(m_pNormalLongTask->m_destination.X, m_pNormalLongTask->m_destination.Y, GetActorLocation().Z);
+					SetActorLocation(desLoc);
+					m_pNormalLongTask->m_taskType = ETaskType::TT_NULL;
+					return;
+				}
 			}
 		}
 
@@ -874,12 +882,12 @@ void ABaseCharacter::RecoverPhysics()
 
 
 
-void ABaseCharacter::EvaluateConditionAround()
+void ABaseCharacter::EvaluateConditionAround(float deltaT)
 {
 	if (m_thinkMode == ECharacterThinkMode::CTM_RandomAtk)
 		EvaluateLongTaskUnderRandomAttackState();
-	else if (m_thinkMode == ECharacterThinkMode::CTM_StrongholdDestroyer)
-		EvaluateLongTaskUnderStrongholdDestroyerState();
+	else if (m_thinkMode == ECharacterThinkMode::CTM_Patrol)
+		EvaluateLongTaskPatrolling(deltaT);
 	else
 		EvaluateLongTaskUnderPlayerHunterState();
 	EvaluateShortTask();
@@ -1057,9 +1065,8 @@ void ABaseCharacter::EvaluateLongTaskUnderPlayerHunterState()
 	}
 }
 
-void ABaseCharacter::EvaluateLongTaskPatrolling()
+void ABaseCharacter::EvaluateLongTaskPatrolling(float deltaT)
 {
-	//只有主机才计算，每两个逻辑帧计算一次，上报给服务端
 	if (!m_pNormalLongTask || !m_pBaseEquipment) return;
 
 	// Only characters inside the range could be attacked
@@ -1140,14 +1147,23 @@ void ABaseCharacter::EvaluateLongTaskPatrolling()
 		{
 			return;
 		}
-
-		// If no target is locked down, we should give an arbitrary target to move
-		FVector2D randPatrolPoint = FMath::RandPointInCircle(m_patrolRange);
-
-
-		m_pNormalLongTask->m_taskType = ETaskType::TT_StayAndAim;
-		m_pNormalLongTask->m_pTarget = NULL;
-		m_pNormalLongTask->m_destination = GetActorLocation();
+		else if (m_pNormalLongTask->m_taskType == ETaskType::TT_NULL)
+		{
+			if (m_currentPatrolIntervalCount >= m_patrolInterval)
+			{
+				// If no target is locked down, we should give an arbitrary target to move
+				FVector2D randPatrolPoint2D = FMath::RandPointInCircle(m_patrolRange);
+				FVector randPatrolPoint(randPatrolPoint2D.X, randPatrolPoint2D.Y, GetActorLocation().Z);
+				m_pNormalLongTask->m_pTarget = NULL;
+				m_pNormalLongTask->m_destination = randPatrolPoint;
+				m_pNormalLongTask->m_taskType = ETaskType::TT_Rush;
+				m_currentPatrolIntervalCount = 0.f;
+			}
+			else
+			{
+				m_currentPatrolIntervalCount += deltaT;
+			}
+		}
 	}
 }
 
