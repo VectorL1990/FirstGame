@@ -65,6 +65,7 @@ public:
 	* 2 - 抛物线
 	* 3 - 被动技能
 	* 4 - 随机生成
+	* 5 - "chop" type skill, only possessed by player character
 	*/
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar/Game/Skills")
 	uint8 m_skillType;
@@ -145,11 +146,4 @@ public:
 
 	UPROPERTY()
 	bool m_hasSpawnGeo = false;
-
-	bool m_isNewSelectSkill = false;
-	/************************************************************************/
-	/* 校正临时变量
-	/************************************************************************/
-	UPROPERTY()
-	TArray<int32> m_correctOverlapCharacterIDs;
 };

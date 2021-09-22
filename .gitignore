@@ -55,6 +55,9 @@ Saved/HardwareSurvey/*
 Saved/Profiling/*
 Saved/SaveGames/*
 Saved/StagedBuilds/*
+Saved/Logs/*
+Saved/Config/CrashReportClient/*
+Saved/AutoScreenshot.png
 
 # Compiled source files for the engine to use
 Intermediate/*

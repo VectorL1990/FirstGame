@@ -598,7 +598,7 @@ void AKing::NotifyLaunchSkill()
 		float yaw = GetActorRotation().Yaw;
 		TArray<TSubclassOf<class ABasePhysGeo> > geoClasses;
 		if (pSkill->m_mutationGeoClass.Contains(pSkill->m_mutationType)) geoClasses = pSkill->m_mutationGeoClass[pSkill->m_mutationType].geoClasses;
-		if (pSkill->m_skillName == "Chop")
+		if (pSkill->m_skillType == 5)
 		{
 			TSubclassOf<class ABasePhysGeo> geoClass = NULL;
 			if (m_pBaseAnimInstance->m_comboState == EComboState::FirstAct)
