@@ -90,7 +90,10 @@ void ABaseCharacter::Tick(float DeltaSeconds)
 			}
 			else
 			{
-				FVector destinationOffset = m_pNormalLongTask->m_destination - GetActorLocation();
+				DrawDebugLine(GetWorld(), GetActorLocation(), m_pNormalLongTask->m_destination, FColor::Green, false, -1, 0, 10.f);
+				FVector2D destination2D(m_pNormalLongTask->m_destination.X, m_pNormalLongTask->m_destination.Y);
+				FVector2D currentLoc2D(GetActorLocation().X, GetActorLocation().Y);
+				FVector2D destinationOffset = destination2D - currentLoc2D;
 				float destinationOffsetSquare = destinationOffset.Size();
 				float expandSize = expandVector.Size();
 				if (expandSize >= destinationOffsetSquare)
@@ -99,6 +102,11 @@ void ABaseCharacter::Tick(float DeltaSeconds)
 					SetActorLocation(desLoc);
 					m_pNormalLongTask->m_taskType = ETaskType::TT_NULL;
 					return;
+				}
+				else
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "CharacterName is: " + GetName() + ", expandSize is: " + FString::SanitizeFloat(expandSize) +
+						", and offsetsize is: " + FString::SanitizeFloat(destinationOffsetSquare));
 				}
 			}
 		}
@@ -884,6 +892,7 @@ void ABaseCharacter::RecoverPhysics()
 
 void ABaseCharacter::EvaluateConditionAround(float deltaT)
 {
+	if (!m_isInitialDoneFlag) return;
 	if (m_thinkMode == ECharacterThinkMode::CTM_RandomAtk)
 		EvaluateLongTaskUnderRandomAttackState();
 	else if (m_thinkMode == ECharacterThinkMode::CTM_Patrol)
@@ -1081,14 +1090,17 @@ void ABaseCharacter::EvaluateLongTaskPatrolling(float deltaT)
 		FVector offsetToCurLoc = enermyPos - GetActorLocation();
 		if (!pTarget)
 		{
-			pTarget = m_pOppCharacters[i];
-			minLogicDis = FMath::Sqrt(offsetToCurLoc.Size());
+			if (offsetToCurLoc.Size() <= m_patrolRange)
+			{
+				pTarget = m_pOppCharacters[i];
+				minLogicDis = FMath::Sqrt(offsetToCurLoc.Size());
+			}
 		}
 		else
 		{
 			if (pTarget->m_characterType == 1 && (m_pOppCharacters[i]->m_characterType == 0 || m_pOppCharacters[i]->m_characterType == 2)) continue;
 			float offsetLen = FMath::Sqrt(offsetToCurLoc.Size());
-			if (offsetLen < minLogicDis)
+			if (offsetLen <= m_patrolRange && offsetLen < minLogicDis)
 			{
 				pTarget = m_pOppCharacters[i];
 				minLogicDis = offsetLen;
@@ -1153,7 +1165,7 @@ void ABaseCharacter::EvaluateLongTaskPatrolling(float deltaT)
 			{
 				// If no target is locked down, we should give an arbitrary target to move
 				FVector2D randPatrolPoint2D = FMath::RandPointInCircle(m_patrolRange);
-				FVector randPatrolPoint(randPatrolPoint2D.X, randPatrolPoint2D.Y, GetActorLocation().Z);
+				FVector randPatrolPoint = m_spawnLoc + FVector(randPatrolPoint2D.X, randPatrolPoint2D.Y, GetActorLocation().Z);
 				m_pNormalLongTask->m_pTarget = NULL;
 				m_pNormalLongTask->m_destination = randPatrolPoint;
 				m_pNormalLongTask->m_taskType = ETaskType::TT_Rush;

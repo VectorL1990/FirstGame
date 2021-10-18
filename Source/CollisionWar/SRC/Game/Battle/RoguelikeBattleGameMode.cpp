@@ -444,7 +444,7 @@ uint8 ARoguelikeBattleGameMode::UpdateVictoryCheck()
 				else victoryFlag = 1;
 			}
 		}
-		else if (m_pAIManager->m_battleInfo.battleType == 1)
+		else if (m_pAIManager->m_battleInfo.battleType == 1 || m_pAIManager->m_battleInfo.battleType == 5)
 		{
 			//ÏÞÊ±»÷É±µÐÈË
 			if (m_curLogicFrameNb < m_pAIManager->m_battleInfo.maxFrame)
@@ -474,15 +474,6 @@ uint8 ARoguelikeBattleGameMode::UpdateVictoryCheck()
 				if (m_pAIManager->m_battleInfo.targetCollectNameList.Num() <= 0) victoryFlag = 1;
 			}
 			else victoryFlag = 2;
-		}
-		else if (m_pAIManager->m_battleInfo.battleType == 5)
-		{
-			if (!m_pPlayerCharacter || m_pPlayerCharacter->m_Hp <= 0) victoryFlag = 2;
-			else
-			{
-				if (m_curLogicFrameNb >= m_pAIManager->m_battleInfo.maxFrame)
-					victoryFlag = 1;
-			}
 		}
 	}
 	
@@ -1580,6 +1571,11 @@ void ARoguelikeBattleGameMode::SpawnEnermyByGroup()
 			FLogicVec2D logicSpawnLoc(availableSpawnPoints[randSpawnPoint].X, availableSpawnPoints[randSpawnPoint].Y);
 			
 			ABaseCharacter* pCharacter = GetWorld()->SpawnActor<ABaseCharacter>(characterBP, availableSpawnPoints[randSpawnPoint], FRotator::ZeroRotator);
+			pCharacter->m_spawnLoc = availableSpawnPoints[randSpawnPoint];
+			if (m_pAIManager->m_battleInfo.battleType == 5)
+			{
+				pCharacter->m_thinkMode = ECharacterThinkMode::CTM_Patrol;
+			}
 			if (pCharacter->m_level < 5)
 			{
 				//which means it's not a boss enermy, we should cout it as normal enermy.

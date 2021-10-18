@@ -90,9 +90,10 @@ public:
 	* 2 = 积分战
 	* 3 = 目标击杀战
 	* 4 = 目标物体收集
+	* 5 = Enermy patrol battle
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CollisionWar")
-	uint8 battleType;
+	uint8 battleType = 5;
 
 	/** how enermy is spawned
 	* 0 - by interval, which means enermies will be spawned by interval

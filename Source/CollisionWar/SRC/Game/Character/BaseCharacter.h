@@ -459,7 +459,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar/Game/Character")
 	ECharacterAtkRange m_characterAtkRange;
 
-	float m_patrolRange = 0.f;
+	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar/Game/Character")
+	float m_patrolRange = 500.f;
 
 	FVector m_spawnLoc;
 

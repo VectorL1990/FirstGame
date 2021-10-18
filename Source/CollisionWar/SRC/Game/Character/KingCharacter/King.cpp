@@ -154,6 +154,11 @@ void AKing::Tick(float DeltaSeconds)
 		//m_curLogicForwardDir = m_logicForwardOperation;
 		
 	}
+
+	for (int32 i=0; i<m_pOppCharacters.Num(); i++)
+	{
+		DrawDebugLine(GetWorld(), GetActorLocation(), m_pOppCharacters[i]->GetActorLocation(), FColor::Red, false, 0.1, 0, 20);
+	}
 	/*if (m_shouldCountToReload)
 	{
 		if (m_curReloadTime >= m_reloadTime)
