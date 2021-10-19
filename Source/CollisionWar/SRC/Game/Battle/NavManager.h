@@ -18,10 +18,10 @@ enum class EPathNodeState : uint8
  * H represents cost from current point to destination
  * F is equal to G + H
  */
-USTRUCT()
-class FRouteNode
+UCLASS()
+class COLLISIONWAR_API URouteNode : public UObject
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 public:
 	void Reset()
 	{
@@ -40,7 +40,7 @@ public:
 	}
 
 	EPathNodeState NodeState;
-	FRouteNode ParentNode;
+	URouteNode* ParentNode;
 	int32 X = 0;
 	int32 Y = 0;
 	int32 G = 999999999;
@@ -48,13 +48,13 @@ public:
 	int32 F = 0;
 };
 
-USTRUCT()
-class FRouteNodeRowInfo
+UCLASS()
+class COLLISIONWAR_API URouteNodeRowInfo : public UObject
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 public:
 	UPROPERTY()
-	TMap<int32, FRouteNode> ColumnNodes;
+	TMap<int32, URouteNode*> ColumnNodes;
 };
 
 /**
@@ -62,13 +62,13 @@ public:
  * information quickly, and the whole map is a sparse matrix, it will consume lots of useless memory to store nodes that
  * roads don't access
  */
-USTRUCT()
-class FRouteNodeMapInfo
+UCLASS()
+class COLLISIONWAR_API URouteNodeMapInfo : public UObject
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 public:
 	UPROPERTY()
-	TMap<int32, FRouteNodeRowInfo> RowInfos;
+	TMap<int32, URouteNodeRowInfo*> RowInfos;
 };
 
 UCLASS()
@@ -84,14 +84,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void GetAllNeighborNodes(int32 X, int32 Y, TArray<FRouteNode>& NeighborNodes);
+	void GetAllNeighborNodes(int32 X, int32 Y, TArray<URouteNode*>& NeighborNodes);
 
-	void TracePath(FRouteNode FinalNode, FRouteNode EndNode, TArray<FVector>& OutputNodes);
+	void TracePath(URouteNode* FinalNode, URouteNode* EndNode, TArray<FVector>& OutputNodes);
 
 	void RefreshNetwork();
 
 	// OpenList store all nodes that are waiting for inspect, node with least F value is at back
-	TArray<FRouteNode> OpenList;
+	TArray<URouteNode*> OpenList;
 
 	UPROPERTY(EditAnywhere)
 	FVector ScanRoadGridSize;
@@ -112,7 +112,7 @@ protected:
 	int32 DiagonalDistance = 14;
 
 	UPROPERTY()
-	FRouteNodeMapInfo RouteNodeMap;
+	URouteNodeMapInfo* RouteNodeMap;
 
 public:	
 	// Called every frame
@@ -120,11 +120,9 @@ public:
 
 	void ConvertRealCoordinateToGrid(FVector InPos, int32& OutX, int32& OutY);
 
-	void ExtractAllRoadsToGrids(ATigerGameModeBase* TigerGameMode);
+	URouteNode* FindNearestNodeByCoordinate(int32 X, int32 Y);
 
-	FRouteNode FindNearestNodeByCoordinate(int32 X, int32 Y);
-
-	void FindPath(FRouteNode StartNode, FRouteNode EndNode, float PathHeight, TArray<FVector>& OutputNodes);
+	void FindPath(URouteNode* StartNode, URouteNode* EndNode, float PathHeight, TArray<FVector>& OutputNodes);
 
 	void ConvertAStartPointsToCriticalPoints(const TArray<FVector>& AStarPoints, TArray<FVector>& OutCriticalPoints);
 
