@@ -2,8 +2,11 @@
 
 #include "CollisionWar.h"
 #include "NavManager.h"
+#include "RoguelikeBattleGameMode.h"
 #include "Kismet/KismetMathLibrary.h"
 
+class ABasePhysGeo;
+class ADumpPhysActor;
 
 // Sets default values
 ANavManager::ANavManager()
@@ -67,7 +70,7 @@ void ANavManager::GetAllNeighborNodes(int32 X, int32 Y, TArray<URouteNode*>& Nei
 
 void ANavManager::TracePath(URouteNode* FinalNode, URouteNode* EndNode, TArray<FVector>& OutputNodes)
 {
-	FVector2D ScanStepSize(ScanRoadGridSize.X, ScanRoadGridSize.Y);
+	FVector2D ScanStepSize(ScanGridSize.X, ScanGridSize.Y);
 	FVector RealEndNode = EndNode->GetRealCoordinate(ScanStartPoint, ScanStepSize);
 	OutputNodes.Insert(RealEndNode, 0);
 	URouteNode* CurrentNode = FinalNode;
@@ -93,11 +96,66 @@ void ANavManager::Tick(float DeltaTime)
 
 }
 
+void ANavManager::ExtractAllGridFromMap(FVector2D LBPoint, FVector2D RTPoint)
+{
+	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(this);
+	ARoguelikeBattleGameMode* RGM = Cast<ARoguelikeBattleGameMode>(GameMode);
+	ScanStepNbX = (int32)((ScanEndPoint.X - ScanStartPoint.X) / ScanGridSize.X);
+	ScanStepNbY = (int32)((ScanEndPoint.Y - ScanStartPoint.Y) / ScanGridSize.Y);
+	RouteNodeMap = NewObject<URouteNodeMapInfo>();
+	RouteNodeMap->RowInfos.Empty();
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery9);
+	
+	// First we initial all scan grid
+	for (int32 i=0; i<ScanStepNbY; i++)
+	{
+		for (int32 j=0; j<ScanStepNbY; j++)
+		{
+
+		}
+	}
+
+	for (int32 i = 0; i < ScanStepNbY; i++)
+	{
+		for (int32 j = 0; j < ScanStepNbX; j++)
+		{
+			float ScanLocX = ScanStartPoint.X + (float)(j * ScanGridSize.X);
+			float ScanLocY = ScanStartPoint.Y + (float)(i * ScanGridSize.Y);
+			float ScanLocZ = ScanStartPoint.Z;
+			FVector ScanLoc(ScanLocX, ScanLocY, ScanLocZ);
+			TArray<AActor*> IgnoreActors;
+			TArray<AActor*> BasePhysGeoActors;
+			TArray<AActor*> DumpActors;
+			UKismetSystemLibrary::BoxOverlapActors(RGM, ScanLoc, ScanGridSize / 2.f, ObjectTypes, ABasePhysGeo::StaticClass(), IgnoreActors, BasePhysGeoActors);
+			UKismetSystemLibrary::BoxOverlapActors(RGM, ScanLoc, ScanGridSize / 2.f, ObjectTypes, ADumpPhysActor::StaticClass(), IgnoreActors, DumpActors);
+			if (BasePhysGeoActors.Num() <= 0 && DumpActors.Num() <= 0)
+			{
+				URouteNode* NewRouteNode = NewObject<URouteNode>(this);
+				NewRouteNode->X = j;
+				NewRouteNode->Y = i;
+				if (RouteNodeMap->RowInfos.Contains(i))
+				{
+					// Which means row already exists, add column information only
+					RouteNodeMap->RowInfos[i]->ColumnNodes.Add(j, NewRouteNode);
+				}
+				else
+				{
+					// Which means current row doesn't exist, add new row
+					URouteNodeRowInfo* NewRow = NewObject<URouteNodeRowInfo>();
+					NewRow->ColumnNodes.Add(j, NewRouteNode);
+					RouteNodeMap->RowInfos.Add(i, NewRow);
+				}
+			}
+		}
+	}
+}
+
 void ANavManager::ConvertRealCoordinateToGrid(FVector InPos, int32& OutX, int32& OutY)
 {
 	FVector Offset = InPos - ScanStartPoint;
-	OutX = (int32)(Offset.X / ScanRoadGridSize.X);
-	OutY = (int32)(Offset.Y / ScanRoadGridSize.Y);
+	OutX = (int32)(Offset.X / ScanGridSize.X);
+	OutY = (int32)(Offset.Y / ScanGridSize.Y);
 }
 
 URouteNode* ANavManager::FindNearestNodeByCoordinate(int32 X, int32 Y)
@@ -132,7 +190,7 @@ void ANavManager::FindPath(URouteNode* StartNode, URouteNode* EndNode, float Pat
 	StartNode->F = 0;
 	OpenList.Add(StartNode);
 	StartNode->NodeState = EPathNodeState::InOpenList;
-	FVector2D ScanStepSize(ScanRoadGridSize.X, ScanRoadGridSize.Y);
+	FVector2D ScanStepSize(ScanGridSize.X, ScanGridSize.Y);
 	while (OpenList.Num() != 0)
 	{
 		// OpenList is sort by F value(which is actually the cost value from start point to end point)

@@ -94,16 +94,17 @@ protected:
 	TArray<URouteNode*> OpenList;
 
 	UPROPERTY(EditAnywhere)
-	FVector ScanRoadGridSize;
+	FVector ScanGridSize;
 
 	UPROPERTY(EditAnywhere)
 	FVector ScanStartPoint;
 
 	UPROPERTY(EditAnywhere)
-	int32 ScanStepNbX;
+	FVector ScanEndPoint;
 
-	UPROPERTY(EditAnywhere)
-	int32 ScanStepNbY;
+	int32 ScanStepNbX = 0;
+
+	int32 ScanStepNbY = 0;
 
 	UPROPERTY(EditAnywhere)
 	int32 NormalDistance = 10;
@@ -117,6 +118,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void ExtractAllGridFromMap(FVector2D LBPoint, FVector2D RTPoint);
 
 	void ConvertRealCoordinateToGrid(FVector InPos, int32& OutX, int32& OutY);
 

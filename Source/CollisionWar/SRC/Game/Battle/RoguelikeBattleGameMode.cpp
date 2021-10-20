@@ -650,38 +650,6 @@ void ARoguelikeBattleGameMode::InitialLevel()
 	m_pAIManager->InitialGradingNameList();
 	m_pAIManager->m_specialEffectPercent = m_specialEffectPercent;
 
-	
-	/*FString foundationCharacterName = "Foundation_1";
-	//UClass* pFoundationCharacterBP = UCollisionWarBpFunctionLibrary::GetCharacterBlueprintClassDynamic(foundationCharacterName);
-	UClass* pFoundationCharacterBP = m_allCharacterInfo[foundationCharacterName].pCharacterClass;
-	//FVector foundationSpawnLoc(pRandSpawnPoint->m_spawnPointLoc.X, pRandSpawnPoint->m_spawnPointLoc.Y, m_defaultSpawnHeight);
-	FVector foundationSpawnLoc(pRandSpawnPoint->m_spawnPointLoc.X+ pRandSpawnPoint->m_spawnPointWidth/2.f, pRandSpawnPoint->m_spawnPointLoc.Y+ pRandSpawnPoint->m_spawnPointWidth/2.f, m_defaultSpawnHeight);
-	FRotator foundationSpawnRot(0, 0, 0);
-	AFoundationCharacter* pFoundationCharacter = GetWorld()->SpawnActor<AFoundationCharacter>(pFoundationCharacterBP, foundationSpawnLoc, foundationSpawnRot);
-	m_pBaseFoundationCharacter = pFoundationCharacter;
-	int32 foundationID = 2;
-	m_occupyIDs.Add(foundationID);
-	InitialNewCharacter(pFoundationCharacter, 0, foundationID, FLogicVec2D(pRandSpawnPoint->m_spawnPointLoc.X + pRandSpawnPoint->m_spawnPointWidth/2.f, pRandSpawnPoint->m_spawnPointLoc.Y + pRandSpawnPoint->m_spawnPointWidth/2.f), false);
-*/
-
-	
-
-	/*for (int32 i = 0; i < m_originPhysActorSpawnList.values.Num(); i++)
-	{
-		if (m_originPhysActorSpawnList.values[i].spawnFrames.Num() != 0) continue;
-		//UClass* BPClass = UCollisionWarBpFunctionLibrary::GetPhysGeoBlueprintClassDynamic(m_originPhysActorSpawnList.values[i].physActorName);
-		UClass* BPClass = ReadPhysGeoBPDynamic(m_originPhysActorSpawnList.values[i].physActorName);
-		int32 spawnLocX = m_originPhysActorSpawnList.values[i].positionX;
-		int32 spawnLocY = m_originPhysActorSpawnList.values[i].positionY;
-		FVector spawnLoc(spawnLocX, spawnLocY, 0);
-		FRotator spawnRot(0, m_originPhysActorSpawnList.values[i].yaw, 0);
-		//FLogicVec2D logicDir = UCollisionWarBpFunctionLibrary::GetLogicVecByYaw_Int(m_originPhysActorSpawnList.values[i].yaw);
-		ABasePhysGeo* pPhysGeo = GetWorld()->SpawnActor<ABasePhysGeo>(BPClass, spawnLoc, spawnRot);
-		//pPhysGeo->m_logicForwardDir = logicDir;
-		pPhysGeo->m_moveType = m_originPhysActorSpawnList.values[i].moveType;
-		m_pPhysCalculator->AddPhysGeo(pPhysGeo, NULL, 0);
-	}*/
-
 	APlayerController* pPlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (!pPlayerController) return;
 	m_pBPC = Cast<ABattleLevelPlayerController>(pPlayerController);
