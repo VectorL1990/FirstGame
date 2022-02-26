@@ -318,29 +318,7 @@ void ABattleLevelGameModeBase::SpawnDeadCharacterFixSkill(TSubclassOf<class UObj
 	m_pPhysCalculator->AddPhysGeo(pPhysGeo, NULL, 0);
 }*/
 
-
-void ABattleLevelGameModeBase::ReadDifficultyParams()
-{
-	/*UGameInstance* pGameInstance = UGameplayStatics::GetGameInstance(GetWorld());
-	if (!pGameInstance) return;
-	UCollisionWarGameInstance* pCWGameInstance = Cast<UCollisionWarGameInstance>(pGameInstance);
-	if (!pCWGameInstance) return;
-	int32 level = pCWGameInstance->m_playerSingleProgressInfos[pCWGameInstance->m_curProgressNb].characterInfo.level;
-
-	int32 difficulty = (int32)pCWGameInstance->m_playerSingleProgressInfos[pCWGameInstance->m_curProgressNb].difficulty;
-	FString difficultyString = FString::FromInt(difficulty);
-	difficultyString = difficultyString.Append("-");
-	difficultyString = difficultyString.Append(FString::FromInt(level));
-	ReadSpecialEffectPercent(difficultyString);
-	ReadAmplificationCoe(FString::FromInt(level));*/
-}
-
 void ABattleLevelGameModeBase::ReadSpecialEffectPercent_Implementation(const FString& difficultyAndLevel)
-{
-
-}
-
-void ABattleLevelGameModeBase::ReadAmplificationCoe_Implementation(const FString& difficulty)
 {
 
 }
