@@ -84,6 +84,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void Init();
+
 	void GetAllNeighborNodes(int32 X, int32 Y, TArray<URouteNode*>& NeighborNodes);
 
 	void TracePath(URouteNode* FinalNode, URouteNode* EndNode, TArray<FVector>& OutputNodes);

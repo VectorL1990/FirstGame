@@ -9,6 +9,7 @@
 #include "Physics/PhysActorSonClass/ConstructionSite.h"
 #include "../../Base/Battle/BattleLevelPlayerController.h"
 #include "../Character/CamCharacter.h"
+#include "NavManager.h"
 #include "RoguelikeBattleGameMode.generated.h"
 
 /**
@@ -78,7 +79,7 @@ public:
 	
 	
 	/************************************************************************/
-	/* 逻辑更新函数                                                                     */
+	/* Main Logic                                                                     */
 	/************************************************************************/
 	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar")
 	UClass* ReadSpawnPointBPDynamic(const FString& className);
@@ -119,7 +120,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar")
 	TMap<int32, FAppendPSInfo> m_pWeatherPSMap;
 	/************************************************************************/
-	/* 次级逻辑函数                                                                     */
+	/* Secondary Logic                                                                     */
 	/************************************************************************/
 	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar")
 	UClass* ReadCharacterBPDynamic(const FString& className);
@@ -142,9 +143,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CollisionWar")
 	void SpawnPrefabActors(TArray<FString> physGeoNameList, TArray<FVector2D> physGeoSpawnLocs, TArray<float> physActorYaws,
 		TArray<FString> dumpActorNameList, TArray<FVector2D> dumpActorSpawnLocs, TArray<float> dumpActorYaws, float spawnHeight);
-	/************************************************************************/
-	/* 逻辑变量                                                                     */
-	/************************************************************************/
+
 	virtual void InitialNewCharacter(ABaseCharacter* pCharacter, int32 campFlag, int32& characterID, FLogicVec2D logicSpawnLoc, bool isAlreadyAssignID) override;
 
 	void SpawnEnermyByGroup();
@@ -155,10 +154,9 @@ public:
 
 	TArray<FVector> GetEnermySpawnPointRandomly();
 
-	/** 由于在绑组件时，有的是SetMasterPoseComponent，有的是AttachTo，所以是按顺序的
-	* 所以在ResetItemList的时候，也要按顺序
-	* 例如第一位是头盔，如没有头盔Null
-	*/
+	/** 
+	 * item list have to be in order, for example helmet is first and 
+	 */
 	UFUNCTION(BlueprintCallable, Category = "CollisionWar")
 		void ResetItemList(const FCharacterItemList& itemList);
 
@@ -236,8 +234,14 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "CollisionWar")
 	TMap<int32, ABasePhysGeo*> m_skillMaskMap;
+
+	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar")
+	TSubclassOf<class ANavManager> NavManagerBPClass;
+
+	UPROPERTY()
+	ANavManager* NavManager;
 	/************************************************************************/
-	/* 生产经营系统
+	/* Battle economic logic
 	/************************************************************************/
 
 	void DealEventList();
@@ -268,7 +272,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar")
 	int32 m_maxNumericCardNb = 100;
 	/************************************************************************/
-	/* 事件部分
+	/* Event logic
 	/************************************************************************/
 	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar")
 	void NotifyEventOccur(const FString& eventName);

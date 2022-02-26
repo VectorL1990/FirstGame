@@ -97,7 +97,7 @@ void ARoguelikeBattleGameMode::Tick(float DeltaSeconds)
 	m_pPhysCalculator->CalGeoReactions();
 	//m_pPhysCalculator->UpdateReactionGeoPair();
 
-	//AI模块，只在主机运行.
+
 	UpdateAllCharacterAILogic(DeltaSeconds);
 	UpdateTeamSquads();
 	UpdateAINavigation();
@@ -394,20 +394,6 @@ void ARoguelikeBattleGameMode::UpdateAICharacterOperation()
 		if (newInfo.actionName == "") newInfo.actionName == "NULL";
 		m_AIOperationList.Add(newInfo);
 	}
-	/*for (uint8 i=0; i<m_pFoundationCharacters.Num(); i++)
-	{
-		if (!m_pFoundationCharacters[i] || !m_pFoundationCharacters[i]->m_pNormalShortTask || !m_pFoundationCharacters[i]->m_pNormalLongTask || !m_pFoundationCharacters[i]->m_pBaseAnimInstance) continue;
-
-		FAICharacterOperationInfo newInfo;
-		newInfo.entityID = m_pFoundationCharacters[i]->m_entityID;
-		newInfo.actionName = m_pFoundationCharacters[i]->m_pNormalShortTask->m_evaluateActionName;
-		newInfo.skillNb = m_pFoundationCharacters[i]->m_pNormalShortTask->m_evaSkillNb;
-		newInfo.yaw = m_pFoundationCharacters[i]->m_pNormalLongTask->m_evaYaw;
-		m_pFoundationCharacters[i]->m_hasUpdateAI = false;
-		//保护
-		if (newInfo.actionName == "") newInfo.actionName == "NULL";
-		m_AIOperationList.Add(newInfo);
-	}*/
 }
 
 uint8 ARoguelikeBattleGameMode::UpdateVictoryCheck()
@@ -620,6 +606,8 @@ void ARoguelikeBattleGameMode::InitialLevel()
 		m_pPlanSpawnPoints.Add(pPlanSpawnPoint);
 	}
 
+	NavManager = SpawnActor<ANavManager>(NavManagerBPClass, FVector::ZeroVector, FRotator::ZeroRotator);
+
 	m_pRecastDetourObject = NewObject<URecastDetourObject>();
 	m_pRecastDetourObject->m_defaultArenaHeight = m_defaultSpawnHeight;
 	m_pRecastDetourObject->InitialBuild("RogueLikeMap");
@@ -641,6 +629,9 @@ void ARoguelikeBattleGameMode::InitialLevel()
 	}
 
 	GenRogueMap(m_pAIManager->m_battleInfo.specifiedLandBlockNameList);
+
+	// Must init NavManager after phys and dump roguelike stuffs generation
+	NavManager->Init();
 
 	//将小兵的生成方式从服务端派发改为由AIDirector来自动控制
 	
@@ -1411,8 +1402,6 @@ void ARoguelikeBattleGameMode::InitialNewCharacter(ABaseCharacter* pCharacter, i
 	pCharacter->m_pCharacterInfoWidget->NotifyHpChange(pCharacter->m_Hp, pCharacter->m_DFC);
 	pCharacter->m_defaultHeight = m_defaultSpawnHeight;
 	pCharacter->SetActorLocation(FVector(logicSpawnLoc.X, logicSpawnLoc.Y, m_defaultSpawnHeight + pCharacter->m_relativeHeight));
-	/*FLogicVec2D forwardDir = UCollisionWarBpFunctionLibrary::GetLogicVecByYaw_Int(logicSpawnYaw);
-	pCharacter->m_curLogicForwardDir = forwardDir;*/
 
 	//将角色加入到对应的Team中
 	bool isFoundCorrespondTeam = false;

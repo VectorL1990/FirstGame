@@ -23,6 +23,11 @@ void ANavManager::BeginPlay()
 	
 }
 
+void ANavManager::Init()
+{
+	
+}
+
 void ANavManager::GetAllNeighborNodes(int32 X, int32 Y, TArray<URouteNode*>& NeighborNodes)
 {
 	if (RouteNodeMap->RowInfos.Contains(Y))
@@ -107,14 +112,6 @@ void ANavManager::ExtractAllGridFromMap(FVector2D LBPoint, FVector2D RTPoint)
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
 	ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery9);
 	
-	// First we initial all scan grid
-	for (int32 i=0; i<ScanStepNbY; i++)
-	{
-		for (int32 j=0; j<ScanStepNbY; j++)
-		{
-
-		}
-	}
 
 	for (int32 i = 0; i < ScanStepNbY; i++)
 	{
@@ -207,7 +204,6 @@ void ANavManager::FindPath(URouteNode* StartNode, URouteNode* EndNode, float Pat
 		// Get all neighbor nodes, inspect them one by one
 		TArray<URouteNode*> NeighborNodes;
 		GetAllNeighborNodes(LastNode->X, LastNode->Y, NeighborNodes);
-		FVector LastNodeRealCoord = LastNode->GetRealCoordinate(ScanStartPoint, ScanStepSize);
 		for (int32 i = 0; i < NeighborNodes.Num(); i++)
 		{
 			if (NeighborNodes[i]->NodeState == EPathNodeState::InCloseList)
@@ -215,7 +211,6 @@ void ANavManager::FindPath(URouteNode* StartNode, URouteNode* EndNode, float Pat
 				// This node has already been inspected, skip it
 				continue;
 			}
-			FVector NeighborRealCoord = NeighborNodes[i]->GetRealCoordinate(ScanStartPoint, ScanStepSize);
 			int32 Distance = 0;
 			if (NeighborNodes[i]->X == LastNode->X || NeighborNodes[i]->Y == LastNode->Y)
 			{
@@ -291,8 +286,15 @@ void ANavManager::FindPath(URouteNode* StartNode, URouteNode* EndNode, float Pat
 	RefreshNetwork();
 }
 
-void ANavManager::ConvertAStartPointsToCriticalPoints(const TArray<FVector>& AStarPoints, TArray<FVector>& OutCriticalPoints)
+
+void ARouteEmergencyManager::RefreshNetwork()
 {
-
+	OpenList.Empty();
+	for (TMap<int32, URouteNodeRowInfo*>::TConstIterator RowIter = RouteNodeMap->RowInfos.CreateConstIterator(); RowIter; ++RowIter)
+	{
+		for (TMap<int32, URouteNode*>::TConstIterator ColIter = RowIter->Value->ColumnNodes.CreateConstIterator(); ColIter; ++ColIter)
+		{
+			ColIter->Value->Reset();
+		}
+	}
 }
-

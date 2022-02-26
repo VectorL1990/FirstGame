@@ -60,23 +60,13 @@ public:
 
 	void UpdateAllDeadCharacters(float tick);
 
-	//void SpawnDeadCharacterFixSkill(TSubclassOf<class UObject> skillGeoClass, ABaseCharacter* pCharacter);
-
-	virtual void UpdateTeamSquads();
-
-	void UpdateAllScore();
 
 	/************************************************************************/
 	/* 难度调整系数
 	/************************************************************************/
 
-	void ReadDifficultyParams();
-
 	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar/Game/Battle")
 	void ReadSpecialEffectPercent(const FString& difficultyAndLevel);
-
-	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar/Game/Battle")
-	void ReadAmplificationCoe(const FString& difficulty);
 
 	/************************************************************************/
 	/* 补帧函数 */

@@ -318,43 +318,6 @@ void ABattleLevelGameModeBase::SpawnDeadCharacterFixSkill(TSubclassOf<class UObj
 	m_pPhysCalculator->AddPhysGeo(pPhysGeo, NULL, 0);
 }*/
 
-void ABattleLevelGameModeBase::UpdateTeamSquads()
-{
-	for (int32 i = 0; i < m_maxUpdateTeamNbPerFrame; i++)
-	{
-		if (m_curTeamAIUpdateNb >= m_pTeams.Num()) m_curTeamAIUpdateNb = 0;
-		m_pTeams[m_curTeamAIUpdateNb]->CharactersFormation();
-		m_curTeamAIUpdateNb++;
-	}
-}
-
-void ABattleLevelGameModeBase::UpdateAllScore()
-{
-	/*if (!m_pPhysCalculator) return;
-	UGameInstance* pGameInstance = UGameplayStatics::GetGameInstance(GetWorld());
-	if (!pGameInstance) return;
-	UCollisionWarGameInstance* pCWGameInstance = Cast<UCollisionWarGameInstance>(pGameInstance);
-	if (!pCWGameInstance) return;
-	for (int32 i=0; i<m_pPhysCalculator->m_tempScorePairs.Num(); i++)
-	{
-		for (int32 j=0; j<m_tempPlayerStatics.Num(); j++)
-		{
-			if (m_tempPlayerStatics[j].accountID == m_pPhysCalculator->m_tempScorePairs[i].pCharacter->m_entityID)
-			{
-				if (m_pPhysCalculator->m_tempScorePairs[i].scoreType == TEXT("killEnermy"))
-				{
-					m_tempPlayerStatics[j].killEnermyNb += 1;
-				}
-				else if (m_pPhysCalculator->m_tempScorePairs[i].scoreType == TEXT("outputScore"))
-				{
-					m_tempPlayerStatics[j].outputScore += m_pPhysCalculator->m_tempScorePairs[i].num;
-				}
-				break;
-			}
-		}
-	}
-	m_pPhysCalculator->m_tempScorePairs.Empty();*/
-}
 
 void ABattleLevelGameModeBase::ReadDifficultyParams()
 {
