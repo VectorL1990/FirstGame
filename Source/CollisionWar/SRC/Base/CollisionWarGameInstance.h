@@ -7,6 +7,7 @@
 #include "ThreadingBase.h"
 #include "../ThirdParty/tinyxml2.h"
 #include "../../../../Plugins/KBEnginePlugins/Source/KBEnginePlugins/Scripts/TransferStructs.h"
+#include "BaseStruct.h"
 #include "CollisionWarGameInstance.generated.h"
 
 using namespace std;
@@ -221,9 +222,6 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "CollisionWar/Base")
 	FPlayerInfo m_playerInfo;
-
-	UPROPERTY(BlueprintReadOnly, Category = "CollisionWar/Base")
-	FGoodsList m_goodsList;
 
 	UPROPERTY(BlueprintReadWrite, Category = "CollisionWar/Base")
 	FString m_accountStatus = "NULL";

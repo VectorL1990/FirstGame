@@ -3,12 +3,3 @@
 #include "CollisionWar.h"
 #include "SpawnPoint.h"
 
-
-
-
-void USpawnPoint::CorrectSpawnPoint(const FEnermySpawnPointCorrectInfo& enermySpawnPointInfo)
-{
-	m_curFrame = enermySpawnPointInfo.curFrame;
-	m_curSpawnCharacterID = enermySpawnPointInfo.curSpawnCharacterID;
-	m_curSpawnRound = enermySpawnPointInfo.curSpawnRound;
-}

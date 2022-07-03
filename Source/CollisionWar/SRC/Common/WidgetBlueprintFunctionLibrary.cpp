@@ -204,34 +204,6 @@ void UWidgetBlueprintFunctionLibrary::ApplyThemeToElement(UWidgetManager* pWidge
 			pTextLine->m_pTextBlock->SetColorAndOpacity(color);
 		}
 	}
-	else if (widgetType == EWidgetType::WidgetType_friendListMenu)
-	{
-		UTemplateFriendListMenu* pFriendListMenu = Cast<UTemplateFriendListMenu>(pWidget);
-		if (!pFriendListMenu) return;
-		if (pFriendListMenu->m_pSearchBoxCaption)
-		{
-			pFriendListMenu->m_pSearchBoxCaption->SetFont(pWidgetManager->m_basicInfo.textElementFont);
-		}
-		if (pFriendListMenu->m_pSearchResultText)
-		{
-			pFriendListMenu->m_pSearchResultText->SetFont(pWidgetManager->m_basicInfo.textElementFont);
-		}
-		if (pFriendListMenu->m_pSearchEditBox)
-		{
-			FEditableTextBoxStyle widgetStyle;
-			FSlateBrush normalBrush;
-			FSlateBrush hoveredBrush;
-			FSlateBrush pressedBrush;
-			FSlateBrush disableBrush;
-			FMargin padding;
-			FSlateFontInfo font;
-			FSlateColor foreGroundColor;
-			FSlateFontInfo captionFont;
-			FSlateColor captionColor;
-			pWidgetManager->GetInputTextStyle(normalBrush, hoveredBrush, pressedBrush, disableBrush, padding, font, foreGroundColor, captionFont, captionColor);
-			pFriendListMenu->m_pSearchEditBox->WidgetStyle = widgetStyle;
-		}
-	}
 	else if (widgetType == EWidgetType::WidgetType_playerDetail)
 	{
 		UTemplatePlayerDetail* pPlayerDetailMenu = Cast<UTemplatePlayerDetail>(pWidget);

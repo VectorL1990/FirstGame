@@ -17,7 +17,6 @@ class COLLISIONWAR_API USpawnPoint : public UObject
 {
 	GENERATED_BODY()
 public:
-	void CorrectSpawnPoint(const FEnermySpawnPointCorrectInfo& enermySpawnPointInfo);
 
 	/************************************************************************/
 	/* 初始化变量

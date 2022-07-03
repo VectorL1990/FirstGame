@@ -18,7 +18,6 @@ class COLLISIONWAR_API UEnermyGroup : public UObject
 {
 	GENERATED_BODY()
 public:
-	void CorrectEnermyGroup(const FEnermyGroupCorrectInfo& groupInfo);
 	/************************************************************************/
 	/* 初始化关卡时派发的变量
 	/************************************************************************/

@@ -75,37 +75,6 @@ void UTemplateFriendListMenu::FriendListMenuFadeOutDone()
 
 void UTemplateFriendListMenu::SwitchPlayerInfo(FString buttonFunction)
 {
-	FString chopPlayerName;
-	FString totalWinNb;
-	if (m_pCurPlayerTag)
-	{
-		for (int32 i = 0; i < m_playerTagInfos.Num(); i++)
-		{
-			chopPlayerName = buttonFunction.RightChop(17);
-			if (chopPlayerName == m_playerTagInfos[i].playerName)
-			{
-				m_pCurPlayerTag->SetDeactive();
-				break;
-			}
-		}
-	}
-	
-	for (int32 i = 0; i < m_playerTagInfos.Num(); i++)
-	{
-		chopPlayerName = buttonFunction.RightChop(17);
-		if (chopPlayerName == m_playerTagInfos[i].playerName)
-		{
-			m_pCurPlayerTag = m_pPlayerTags[i];
-			m_pCurPlayerTag->SetActive();
-			totalWinNb = FString::FromInt(m_playerTagInfos[i].totalWinNb);
-			break;
-		}
-	}
-	if (m_pPlayerDetailWidget)
-	{
-		m_pPlayerDetailWidget->m_playerName = chopPlayerName;
-		m_pPlayerDetailWidget->m_playerTotalWinNbText = totalWinNb;
-	}
 }
 
 void UTemplateFriendListMenu::ClickResumeButton()

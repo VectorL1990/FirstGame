@@ -44,7 +44,7 @@ public:
 
 	UCollisionWarSingleton* m_pCWSingleton;
 	/************************************************************************/
-	/* 修改逻辑变量函数 */
+	/* ?????????????? */
 	/************************************************************************/
 	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar/Game/Battle")
 	void LevelLogic(int32 frameNb);
@@ -67,7 +67,7 @@ public:
 	void UpdateAllScore();
 
 	/************************************************************************/
-	/* 难度调整系数
+	/* ?????????
 	/************************************************************************/
 
 	void ReadDifficultyParams();
@@ -79,7 +79,7 @@ public:
 	void ReadAmplificationCoe(const FString& difficulty);
 
 	/************************************************************************/
-	/* 补帧函数 */
+	/* ??????? */
 	/************************************************************************/
 
 	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar/Game/Battle")
@@ -106,7 +106,7 @@ public:
 
 	int32 GetAnUnOccupyID();
 	/************************************************************************/
-	/* 修改关卡逻辑函数
+	/* ????????????
 	/************************************************************************/
 
 	UFUNCTION(BlueprintCallable, Category = "CollisionWar/Game")
@@ -119,13 +119,13 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "CollisionWar")
 	void NotifyIndicatorShowUp();
 	/************************************************************************/
-	/* 工具函数
+	/* ???????
 	/************************************************************************/
 	UFUNCTION(BlueprintCallable, Category = "CollisionWar/Game")
 	int32 GenRandNumber(int32 min, int32 max);
 
 	/************************************************************************/
-	/* 战斗系统常量                                                                     */
+	/* ?????????                                                                     */
 	/************************************************************************/
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar/Game")
 	float m_defaultSpawnHeight = 190;
@@ -168,7 +168,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "CollisionWar")
 	AActor* m_pTutorialIndicator;
 	/************************************************************************/
-	/* 帧同步时间变量                                                                     */
+	/**/
 	/************************************************************************/
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar/Game")
 	int32 m_logicExpandTickTimeDelta = 40;
@@ -180,7 +180,7 @@ public:
 	int32 m_maxUpdateTeamNbPerFrame = 1;
 
 	/************************************************************************/
-	/* 逻辑变量                                                                     */
+	/**/
 	/************************************************************************/
 	
 	void ModifyCharacterProByLevel(ABaseCharacter* pCharacter, const int32& level);
@@ -219,19 +219,7 @@ public:
 	int32 m_lastFrameNb = 0;
 
 	UPROPERTY()
-	TArray<ULogicFrameInfo*> m_toProcessFrames;
-
-	UPROPERTY()
-	TArray<ULogicFrameInfo*> m_pHistoryFrames;
-
-	UPROPERTY()
 	FPlayerOperationInfo m_playerOperation;
-
-	UPROPERTY()
-	UCompleteFrameInfo* m_pToCompareCorrectFrame;
-
-	UPROPERTY()
-	UCompleteFrameInfo* m_pLatestMemoryFrame;
 
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar/Game")
 	TSubclassOf<class UAIManager> m_aiManagerClass;
@@ -326,7 +314,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "CollisionWar")
 		int32 m_maxFCNb = 6;
 	/************************************************************************/
-	/* 难度调整系数
+	/*
 	/************************************************************************/
 	UPROPERTY(BlueprintReadWrite, Category = "CollisionWar/Base/BattleLevel")
 	int32 m_specialEffectPercent = 0;
@@ -343,7 +331,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "CollisionWar/Base/BattleLevel")
 	int32 m_spawnAmplification = 0;
 	/************************************************************************/
-	/* 生产经营系统
+	/*
 	/************************************************************************/
 
 	void RecoverPlayerPerInterval();
@@ -384,20 +372,20 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "CollisionWar")
 	TMap<FString, FFCSpawnEffectPSInfo> m_cardCombinePSMap;
 	/************************************************************************/
-	/* 异步加载部分
+	/*
 	/************************************************************************/
 	bool m_hasApplyAsyncLoad = false;
 
 	bool m_hasAsyncLoadDone = false;
 
 	/************************************************************************/
-	/* 得分记录系统
+	/*
 	/************************************************************************/
 
 	virtual void RecordAllScores(TArray<ABaseCharacter*> pAllDeadCharacters);
 
 	/************************************************************************/
-	/* 临时变量                                                                     */
+	/*
 	/************************************************************************/
 	UPROPERTY()
 	TArray<FPlayerBattleStatus> m_tempPlayerStatics;
